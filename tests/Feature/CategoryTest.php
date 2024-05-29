@@ -3,10 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Scopes\IsActiveScope;
 use Database\Seeders\CategorySeeder;
+use Database\Seeders\CustomerSeeder;
 use Database\Seeders\ProductSeeder;
+use Database\Seeders\ReviewSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -119,7 +122,8 @@ class CategoryTest extends TestCase
         self::assertEquals(0, $total);
     }
 
-    public function testDeleteMany() {
+    public function testDeleteMany()
+    {
         $categories = [];
         for ($i = 0; $i < 10; $i++) {
             $categories[] = [
@@ -206,9 +210,9 @@ class CategoryTest extends TestCase
         self::assertNotNull($category);
 
         $product = Product::where("category_id", "=", $category->id)->get();
-        
+
         self::assertNotNull($product);
-        self::assertCount(1, $product);
+        self::assertCount(2, $product);
     }
 
     public function testOneToManyQuery()
@@ -236,9 +240,21 @@ class CategoryTest extends TestCase
 
         $category = Category::find("FOOD");
         $products = $category->products;
-        self::assertCount(1, $products);
+        self::assertCount(2, $products);
 
         $outOfStockProducts = $category->products()->where('stock', "<=", 0)->get();
-        self::assertCount(1, $outOfStockProducts);
+        self::assertCount(2, $outOfStockProducts);
+    }
+
+    public function testHasManyThough()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class, CustomerSeeder::class, ReviewSeeder::class]);
+
+        $category = Category::find("FOOD");
+        self::assertNotNull($category);
+
+        $reviews = $category->reviews;
+        self::assertNotNull($reviews);
+        self::assertCount(2, $reviews);
     }
 }
