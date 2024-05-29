@@ -29,4 +29,19 @@ class CustomerTest extends TestCase
 
         self::assertEquals(1000000, $wallet->amount);
     }
+
+    public function testOneToOneQuery()
+    {
+        $customer = new Customer();
+        $customer->id = "TYN";
+        $customer->name = "Christian";
+        $customer->email = "test@gmail.com";
+        $customer->save();
+
+        $wallet = new Wallet();
+        $wallet->amount = 1000000;
+
+        $customer->wallets()->save($wallet);
+        self::assertNotNull($wallet->customer_id);
+    }
 }
