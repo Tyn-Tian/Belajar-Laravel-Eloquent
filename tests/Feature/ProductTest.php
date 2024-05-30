@@ -71,7 +71,7 @@ class ProductTest extends TestCase
 
         $comments = $product->comments;
         foreach ($comments as $comment){
-            self::assertEquals(Product::class, $comment->commentable_type);
+            self::assertEquals('product', $comment->commentable_type);
             self::assertEquals($product->id, $comment->commentable_id);
         }
     }
@@ -107,5 +107,17 @@ class ProductTest extends TestCase
             self::assertNotNull($vouchers);
             self::assertCount(1, $vouchers);
         }
+    }
+
+    public function testEloquentCollection()
+    {
+        $this->seed([CategorySeeder::class, ProductSeeder::class]);
+
+        $products = Product::query()->get();
+
+        $products = $products->toQuery()->where("price", "200")->get();
+
+        self::assertNotNull($products);
+        self::assertEquals("2", $products[0]->id);
     }
 }
