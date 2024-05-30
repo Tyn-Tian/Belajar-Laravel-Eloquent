@@ -49,7 +49,7 @@ class CustomerTest extends TestCase
         $wallet = new Wallet();
         $wallet->amount = 1000000;
 
-        $customer->wallets()->save($wallet);
+        $customer->wallet()->save($wallet);
         self::assertNotNull($wallet->customer_id);
     }
 
@@ -153,5 +153,21 @@ class CustomerTest extends TestCase
         self::assertNotNull($image);
 
         self::assertEquals("https://www.programmerzamannow.com/image/1.jpg", $image->url);
+    }
+
+    public function testEager() 
+    {
+        $this->seed([CustomerSeeder::class, WalletSeeder::class, ImageSeeder::class]);
+
+        $customer = Customer::with(["wallet", "image"])->find("TYN");
+        self::assertNotNull($customer);
+    }
+
+    public function testEagerModel()
+    {
+        $this->seed([CustomerSeeder::class, WalletSeeder::class, ImageSeeder::class]);
+
+        $customer = Customer::find("TYN");
+        self::assertNotNull($customer);
     }
 }

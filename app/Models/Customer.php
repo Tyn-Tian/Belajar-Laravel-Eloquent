@@ -18,8 +18,9 @@ class Customer extends Model
     protected $keyType = "string";
     public $incrementing = false;
     public $timestamps = false;
+    protected $with = ["wallet"];
 
-    public function wallets(): HasOne
+    public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class, "customer_id", "id");
     }
